@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="slides-format" content="viewport">
+    <title>Amiens — Plan de reconstruction 1942 — Pierre Dufau</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --color-bg: #f4f7fb;
+            --color-bg-deep: #ede6d6;
+            --color-surface: #ffffff;
+            --color-text: #0b1220;
+            --color-text-secondary: #3d3020;
+            --color-text-muted: #7a6a52;
+            --color-accent-1: #0f4c81;
+            --color-accent-2: #7ec8f5;
+            --color-accent-3: #94a3b8;
+            --color-glass-bg: rgba(255,255,255,0.82);
+            --color-glass-border: rgba(139,69,19,0.12);
+            --color-vignette: rgba(0,0,0,0.07);
+            --font-display: 'Open Sans', Arial, sans-serif;
+            --font-body: 'Open Sans', Arial, sans-serif;
+        }
+    </style>
+    <style>
+        :root { --color-bg:#f4f7fb; --color-text:#0b1220; --color-accent-1:#0f4c81; --color-accent-2:#7ec8f5; --color-accent-3:#94a3b8; --glow-color-rgb:15,76,129; }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        html,body{background:var(--color-bg);overflow:hidden;height:100vh;width:100vw;}
+        body{font-family:'DM Sans',system-ui,sans-serif;color:var(--color-text);}
+        .deck{width:100vw;height:100vh;position:relative;}
+        .slide{position:absolute;top:0;left:0;width:100%;height:100%;background:var(--color-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:scale(0.97);transition:opacity 0.6s ease,transform 0.6s ease;pointer-events:none;overflow:hidden;}
+        .slide.active{opacity:1;transform:scale(1);pointer-events:all;}
+        .slide>.content{position:relative;z-index:2;width:100%;max-width:1100px;padding:clamp(1.2rem,3vw,3rem);}
+        .slide::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");background-size:256px 256px;opacity:0.035;mix-blend-mode:multiply;}
+        .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.06) 100%);}
+        .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+        @keyframes float-slow{0%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.08);}66%{transform:translate(-25px,20px) scale(0.94);}100%{transform:translate(0,0) scale(1);}}
+        @keyframes float-drift{0%{transform:translate(0,0) scale(1) rotate(0deg);}40%{transform:translate(-35px,-45px) scale(1.1) rotate(2deg);}80%{transform:translate(30px,25px) scale(0.91) rotate(-1deg);}100%{transform:translate(0,0) scale(1) rotate(0deg);}}
+        .blob{position:absolute;border-radius:50%;filter:blur(70px);animation:float-slow 12s ease-in-out infinite;}
+        .blob:nth-child(2){animation:float-drift 16s ease-in-out infinite;}
+        .blob:nth-child(3){animation:float-slow 20s ease-in-out infinite reverse;}
+        .reveal{opacity:0;transform:translateY(18px);}
+        .nav-controls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:100;background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);padding:7px 20px;border-radius:40px;border:1px solid rgba(139,69,19,0.18);box-shadow:0 2px 16px rgba(0,0,0,0.08);}
+        .nav-btn{width:34px;height:34px;border:none;background:rgba(15,76,129,0.08);color:var(--color-accent-1);border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+        .nav-btn:hover{background:rgba(139,69,19,0.18);}
+        .slide-dots{display:flex;gap:6px;}
+        .slide-dots .dot{width:8px;height:8px;border-radius:50%;background:rgba(139,69,19,0.18);cursor:pointer;transition:background 0.3s,transform 0.3s;}
+        .slide-dots .dot.active{background:var(--color-accent-1);transform:scale(1.35);}
+        .slide-counter{font-size:0.72rem;color:var(--color-text-muted);min-width:34px;text-align:center;font-family:'Open Sans', Arial, sans-serif;}
+        .glass-card{background:rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(139,69,19,0.10);border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,0.07);padding:1.4rem 1.6rem;transition:transform 0.25s ease,box-shadow 0.25s ease;}
+        .glass-card:hover{transform:translateY(-3px);box-shadow:0 7px 24px rgba(0,0,0,0.1);}
+        .accent-border-l{border-left:4px solid var(--color-accent-1);padding-left:1.1rem;}
+        .accent-border-blue{border-left:4px solid var(--color-accent-3);padding-left:1.1rem;}
+        .ornament{display:flex;align-items:center;gap:0.8rem;margin:0.4rem 0 1rem;}
+        .ornament::before,.ornament::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(139,69,19,0.25),transparent);}
+        .section-badge{display:inline-block;padding:0.2rem 0.75rem;background:rgba(15,76,129,0.10);color:var(--color-accent-1);border-radius:20px;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;font-family:'Open Sans', Arial, sans-serif;}
+        .timeline-line{position:absolute;left:20px;top:10px;bottom:10px;width:2px;background:linear-gradient(to bottom,var(--color-accent-1),var(--color-accent-2));}
+        .timeline-dot{width:11px;height:11px;border-radius:50%;background:var(--color-accent-1);box-shadow:0 0 0 3px rgba(15,76,129,0.15);flex-shrink:0;}
+        .stat-num{font-family:'Open Sans', Arial, sans-serif;font-weight:700;color:var(--color-accent-1);line-height:1;}
+        .year-pill{background:linear-gradient(135deg,var(--color-accent-1),var(--color-accent-2));color:white;border-radius:5px;padding:0.1rem 0.55rem;font-size:0.85rem;font-weight:600;display:inline-block;}
+        .cite-footer{font-size:0.62rem;color:var(--color-text-muted);margin-top:0.6rem;font-style:italic;font-family:'Open Sans', Arial, sans-serif;}
+        .mouse-spotlight{position:fixed;inset:0;z-index:99;pointer-events:none;}
+        .slide-dark{background:linear-gradient(135deg,#2a1a08 0%,#1a0e04 60%,#0d1e2e 100%);}
+        .slide-dark::after{background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.35) 100%);}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.15s!important;}}
+    </style>
+</head>
+<body>
+<div class="mouse-spotlight" id="spotlight"></div>
+<div class="deck">
+
+<!-- SLIDE 1 : COUVERTURE -->
+<div class="slide slide-dark active" data-slide="1">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:500px;height:500px;top:-110px;right:-70px;background:rgba(139,69,19,0.22);"></div>
+        <div class="blob" style="width:300px;height:300px;bottom:-70px;left:-50px;background:rgba(148,163,184,0.22);"></div>
+        <div class="blob" style="width:180px;height:180px;top:42%;left:10%;background:rgba(200,134,10,0.14);"></div>
+    </div>
+    <div class="content" style="text-align:center;max-width:880px;">
+        <div class="reveal" style="margin-bottom:1.2rem;"><span style="font-family:'Open Sans', Arial, sans-serif;font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,220,160,0.65);">Exposition — Archives d'architecture · CAPA Paris</span></div>
+        <h1 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(2.4rem,5.5vw,4.8rem);font-weight:300;color:#fdf6e3;line-height:1.12;margin-bottom:0.4rem;">Amiens ressuscitée</h1>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.2rem,2.3vw,1.9rem);font-weight:600;font-style:italic;margin-bottom:1.5rem;"><span style="background:linear-gradient(135deg,#d4956a,#f0c060);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Le plan de reconstruction de Pierre Dufau, 1942</span></h2>
+        <div class="reveal" style="display:flex;align-items:center;gap:1rem;justify-content:center;margin-bottom:1.8rem;"><div style="height:1px;width:70px;background:rgba(245,220,160,0.25);"></div><span style="color:rgba(245,220,160,0.4);">✦</span><div style="height:1px;width:70px;background:rgba(245,220,160,0.25);"></div></div>
+        <div class="reveal" style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;">
+            <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:0.45rem 1rem;color:rgba(245,220,160,0.75);font-size:0.75rem;font-family:'Open Sans', Arial, sans-serif;">📁 Archive FRAPN02_DUFPI — Archiwebture, CAPA, Paris</div>
+            <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:0.45rem 1rem;color:rgba(245,220,160,0.75);font-size:0.75rem;font-family:'Open Sans', Arial, sans-serif;">🏛 Cité de l'architecture et du patrimoine</div>
+        </div>
+        <p class="reveal" style="margin-top:2.2rem;font-size:0.7rem;color:rgba(245,220,160,0.3);letter-spacing:0.08em;text-transform:uppercase;font-family:'Open Sans', Arial, sans-serif;">Flèches ← → ou swipe pour naviguer · 14 panneaux</p>
+    </div>
+</div>
+
+<!-- SLIDE 2 : AVANT-PROPOS -->
+<div class="slide" data-slide="2">
+    <div class="gradient-mesh"><div class="blob" style="width:360px;height:360px;top:-55px;right:-55px;background:rgba(139,69,19,0.07);"></div><div class="blob" style="width:230px;height:230px;bottom:-40px;left:-30px;background:rgba(200,134,10,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal">Avant-propos</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Ce que vous tenez entre les mains</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">archive &amp; mémoire</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-top:0.3rem;">
+            <div class="glass-card reveal"><p style="font-size:0.7rem;font-weight:600;color:var(--color-accent-1);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.35rem;">Le document de base</p><p style="font-size:0.9rem;line-height:1.6;color:var(--color-text-secondary);">Ce catalogue prend pour point de départ un plan d'urbanisme conservé dans le fonds Pierre Dufau à <strong>Archiwebture</strong> — Centre d'archives d'architecture contemporaine (CAPA), Cité de l'architecture et du patrimoine, Paris.</p><div style="border:1px dashed rgba(15,76,129,0.30);border-radius:7px;padding:0.8rem 1rem;background:rgba(15,76,129,0.04);margin-top:0.7rem;"><p style="font-size:0.65rem;color:var(--color-text-muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.2rem;">Référence archivistique</p><p style="font-size:0.8rem;font-family:'Open Sans', Arial, sans-serif;color:var(--color-text);">Projet <strong>DUFPI-E-40-2</strong><br>Fonds FRAPN02_DUFPI · 1940–1961</p></div></div>
+            <div class="glass-card reveal"><p style="font-size:0.7rem;font-weight:600;color:var(--color-accent-3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.35rem;">Pourquoi cette archive ?</p><p style="font-size:0.9rem;line-height:1.6;color:var(--color-text-secondary);">Adopté en <strong>juillet 1942</strong> sous l'Occupation, ce plan est une œuvre collective unique : il trace la ville d'Amiens <em>avant même</em> la fin de la guerre, comme un acte de foi dans l'avenir.</p><p style="font-size:0.9rem;line-height:1.6;color:var(--color-text-secondary);margin-top:0.5rem;">La reconstruction ne sera déclarée achevée qu'en <strong>2014</strong>, quand les derniers vides laissés par les bombes sont comblés place au Feurre — <em>74 ans après les bombardements</em>.</p></div>
+        </div>
+        <p class="cite-footer reveal">Sources : Archiwebture/CAPA (DUFPI-E-40-2) · Archives municipales d'Amiens · CIAP Amiens Métropole (exposition « Reconstruire après 1940 », nov. 2024–mai 2025)</p>
+    </div>
+</div>
+
+<!-- SLIDE 3 : MAI 1940 -->
+<div class="slide" data-slide="3">
+    <div class="gradient-mesh"><div class="blob" style="width:340px;height:340px;top:-40px;left:-50px;background:rgba(200,50,30,0.06);"></div><div class="blob" style="width:270px;height:270px;bottom:-50px;right:-40px;background:rgba(139,69,19,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal" style="background:rgba(180,40,20,0.1);color:#b42814;">Repère 1 — La catastrophe</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">18–23 mai 1940 : Amiens brûle</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Bombardements allemands</span></div>
+        <div style="display:grid;grid-template-columns:1.7fr 1fr;gap:1.1rem;margin-top:0.2rem;">
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.9rem;line-height:1.6;color:var(--color-text-secondary);">Le <strong>18 mai 1940</strong>, l'aviation allemande bombarde Amiens. Le <strong>23 mai</strong>, des bombes incendiaires embrasent la rue des Trois-Cailloux. L'incendie dure plusieurs jours, faute d'eau et de secours. Les morts se comptent par centaines.</p></div>
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.9rem;line-height:1.6;color:var(--color-text-secondary);">La population (93 000 hab. avant-guerre) s'enfuit massivement — <strong>exode massif</strong>. À mi-juillet 1940, moins de 5 000 personnes restent dans la ville, terrées dans les caves. La moitié des habitants est sinistrée à divers degrés.</p></div>
+                <div class="glass-card reveal accent-border-l" style="padding:0.9rem 1.1rem;"><p style="font-size:0.88rem;font-style:italic;color:var(--color-text-secondary);">« La cathédrale seule dresse sa silhouette sur un horizon de briques calcinées. Le reste n'est que décombres. »</p><p style="font-size:0.68rem;color:var(--color-text-muted);margin-top:0.25rem;">Archives municipales d'Amiens, rapport 1940</p></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="text-align:center;padding:1rem;"><p class="stat-num" style="font-size:2.8rem;">75%</p><p style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.2rem;">du centre-ville détruit</p></div>
+                <div class="glass-card reveal" style="text-align:center;padding:1rem;"><p class="stat-num" style="font-size:2.5rem;">~100</p><p style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.2rem;">victimes civiles (19 mai)</p></div>
+                <div class="glass-card reveal" style="text-align:center;padding:1rem;"><p class="stat-num" style="font-size:2.3rem;">1 M m³</p><p style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.2rem;">de décombres à évacuer</p></div>
+                <div class="glass-card reveal" style="text-align:center;padding:0.9rem;background:rgba(148,163,184,0.10);border-color:rgba(148,163,184,0.18);"><p style="font-size:0.7rem;font-weight:600;color:var(--color-accent-3);">✓ Épargnée</p><p style="font-size:0.95rem;margin-top:0.1rem;">🏛 Notre-Dame d'Amiens</p><p style="font-size:0.68rem;color:var(--color-text-muted);">Cathédrale gothique (1220)<br>UNESCO 1981</p></div>
+            </div>
+        </div>
+        <p class="cite-footer reveal">Sources : Amiens.fr (« Il y a 80 ans : les bombes »), Amiens-wiki.fr, fortitude-ww2.fr, clio-cr.clionautes.org</p>
+    </div>
+</div>
+
+<!-- SLIDE 4 : CADRE JURIDIQUE -->
+<div class="slide" data-slide="4">
+    <div class="gradient-mesh"><div class="blob" style="width:290px;height:290px;top:-40px;right:-40px;background:rgba(148,163,184,0.10);"></div><div class="blob" style="width:210px;height:210px;bottom:-30px;left:-20px;background:rgba(139,69,19,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal" style="background:rgba(148,163,184,0.12);color:var(--color-accent-3);">Repère 2 — Cadre juridique</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">L'État reconstruit la France : les lois fondatrices</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">1940 · 1944 · 1946</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.9rem;margin-top:0.3rem;">
+            <div class="glass-card reveal" style="padding:1.1rem 1.2rem;"><span class="year-pill">1940</span><p style="font-size:0.82rem;font-weight:600;color:var(--color-text);margin:0.5rem 0 0.25rem;">Loi du 11 octobre</p><p style="font-size:0.85rem;line-height:1.55;color:var(--color-text-secondary);">Première « charte de la reconstruction » : l'État prend en charge les dommages de guerre, retire aux communes la compétence urbanistique, désigne un architecte en chef par ville sinistrée.</p></div>
+            <div class="glass-card reveal" style="padding:1.1rem 1.2rem;"><span class="year-pill">1944</span><p style="font-size:0.82rem;font-weight:600;color:var(--color-text);margin:0.5rem 0 0.25rem;">Décret 16 nov. 1944</p><p style="font-size:0.85rem;line-height:1.55;color:var(--color-text-secondary);">Création du <strong>ministère de la Reconstruction et de l'Urbanisme (MRU)</strong>. Raoul Dautry puis Eugène Claudius-Petit coordonnent les chantiers nationaux de Brest à Amiens.</p></div>
+            <div class="glass-card reveal" style="padding:1.1rem 1.2rem;"><span class="year-pill">1946</span><p style="font-size:0.82rem;font-weight:600;color:var(--color-text);margin:0.5rem 0 0.25rem;">Loi du 28 oct. 1946</p><p style="font-size:0.85rem;line-height:1.55;color:var(--color-text-secondary);">Loi fondamentale sur les dommages de guerre : principe de la <strong>réparation intégrale</strong>. Les sinistrés reçoivent des indemnités pour financer leur logement dans les nouveaux immeubles collectifs.</p></div>
+        </div>
+        <div class="glass-card accent-border-blue reveal" style="margin-top:0.9rem;padding:0.85rem 1.2rem;"><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);"><strong>Conséquence directe pour Amiens :</strong> Pierre Dufau, désigné architecte reconstructeur en juillet 1941, bénéficie d'une autorité planificatrice totale. Il peut remembrer les parcelles, élargir les rues, imposer un style cohérent — sans être soumis aux intérêts individuels des anciens propriétaires.</p></div>
+        <p class="cite-footer reveal">Sources : FranceArchives (lois de reconstruction) · Archives dép. de la Somme · CIAP Amiens Métropole, 2024</p>
+    </div>
+</div>
+
+<!-- SLIDE 5 : PIERRE DUFAU -->
+<div class="slide" data-slide="5">
+    <div class="gradient-mesh"><div class="blob" style="width:330px;height:330px;top:-50px;right:-50px;background:rgba(139,69,19,0.07);"></div><div class="blob" style="width:200px;height:200px;bottom:-30px;left:-20px;background:rgba(200,134,10,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal">Repère 3 — L'architecte</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Pierre Dufau (1908–1985) — « Un libéral discipliné »</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Arras 1908 — Paris 1985</span></div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:1.3rem;margin-top:0.3rem;align-items:start;">
+            <div class="reveal" style="display:flex;flex-direction:column;gap:0.75rem;align-items:center;">
+                <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent-1),var(--color-accent-2));display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🏗</div>
+                <div class="glass-card" style="padding:0.7rem 0.9rem;text-align:center;min-width:148px;"><p style="font-size:0.67rem;font-weight:600;color:var(--color-accent-1);text-transform:uppercase;letter-spacing:0.07em;">Prix de Rome</p><p style="font-family:'Open Sans', Arial, sans-serif;font-size:1.7rem;font-weight:700;color:var(--color-accent-2);">1938</p><p style="font-size:0.7rem;color:var(--color-text-muted);">1er Second Grand Prix</p></div>
+                <div class="glass-card" style="padding:0.7rem 0.9rem;text-align:center;min-width:148px;"><p style="font-size:0.67rem;font-weight:600;color:var(--color-accent-1);text-transform:uppercase;letter-spacing:0.07em;">Réalisations</p><p style="font-family:'Open Sans', Arial, sans-serif;font-size:1.7rem;font-weight:700;color:var(--color-accent-1);">600+</p><p style="font-size:0.7rem;color:var(--color-text-muted);">bâtiments construits</p></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.7rem;">
+                <div class="glass-card reveal" style="padding:0.9rem 1.2rem;"><p style="font-size:0.68rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Formation</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Diplômé de l'<strong>École des Beaux-Arts de Paris</strong> en 1937. Premier Second Grand Prix de Rome 1938 pour un centre sportif — distinction académique suprême, qui lui ouvre les grandes commandes publiques.</p></div>
+                <div class="glass-card reveal" style="padding:0.9rem 1.2rem;"><p style="font-size:0.68rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">À Amiens (1941–1954)</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Lauréat du concours d'automne 1940, agréé <strong>architecte reconstructeur juillet 1941</strong>. Double statut : urbaniste municipal + architecte agréé MRU pour la Somme. Il coordonne une trentaine d'architectes collaborateurs.</p></div>
+                <div class="glass-card reveal" style="padding:0.9rem 1.2rem;"><p style="font-size:0.68rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Carrière nationale</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Architecte-conseil au ministère de l'Équipement (1954–76), architecte en chef des Bâtiments civils (1967), architecte en chef de <strong>La Défense</strong> (1972–85) et du Nouveau Créteil (1969–77). Thèse de H. Massire, Tours, 2017.</p></div>
+            </div>
+        </div>
+        <p class="cite-footer reveal">Sources : Agorha/INHA · Archiwebture FRAPN02_DUFPI · H. Massire, thèse Tours 2017 (theses.fr) · Wikipedia Pierre Dufau</p>
+    </div>
+</div>
+
+<!-- SLIDE 6 : PLANIFIER SOUS L'OCCUPATION -->
+<div class="slide slide-dark" data-slide="6">
+    <div class="gradient-mesh"><div class="blob" style="width:440px;height:440px;top:-100px;right:-70px;background:rgba(126,200,245,0.22);"></div><div class="blob" style="width:270px;height:270px;bottom:-55px;left:-40px;background:rgba(15,76,129,0.15);"></div></div>
+    <div class="content" style="text-align:center;max-width:800px;">
+        <span class="reveal" style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,220,160,0.55);font-family:'Open Sans', Arial, sans-serif;">Repère 4</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(2rem,4.5vw,3.8rem);font-weight:300;color:#fdf6e3;line-height:1.15;margin:0.5rem 0;">Juillet 1942</h2>
+        <h3 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.1rem,2.3vw,1.75rem);font-weight:600;font-style:italic;margin-bottom:1.4rem;"><span style="background:linear-gradient(135deg,#d4956a,#f0c060);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Planifier la ville de l'après-guerre — pendant la guerre</span></h3>
+        <div class="reveal" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.11);border-radius:11px;padding:1.3rem 1.8rem;max-width:660px;margin:0 auto;"><p style="font-size:1rem;line-height:1.7;color:rgba(253,246,227,0.87);font-family:'Open Sans', Arial, sans-serif;font-style:italic;">« Dessiner les rues à venir pendant l'Occupation, c'est affirmer que la ville existera encore. C'est un acte de résistance culturelle autant qu'un exercice technique. »</p><p style="font-size:0.7rem;color:rgba(245,220,160,0.45);margin-top:0.6rem;font-family:'Open Sans', Arial, sans-serif;">Hugo Massire · commissaire, exposition « Reconstruire après 1940 » · CIAP Amiens, 2024</p></div>
+        <div class="reveal" style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.3rem;flex-wrap:wrap;">
+            <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:0.45rem 0.9rem;color:rgba(245,220,160,0.72);font-size:0.75rem;font-family:'Open Sans', Arial, sans-serif;">🗺 Concours d'idées — automne 1940</div>
+            <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:0.45rem 0.9rem;color:rgba(245,220,160,0.72);font-size:0.75rem;font-family:'Open Sans', Arial, sans-serif;">📐 Plan adopté — juillet 1942</div>
+            <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:0.45rem 0.9rem;color:rgba(245,220,160,0.72);font-size:0.75rem;font-family:'Open Sans', Arial, sans-serif;">🧱 1re pierre — 13 juillet 1947</div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7 : LIRE LE PLAN -->
+<div class="slide" data-slide="7">
+    <div class="gradient-mesh"><div class="blob" style="width:310px;height:310px;top:-40px;right:-40px;background:rgba(139,69,19,0.07);"></div><div class="blob" style="width:230px;height:230px;bottom:-30px;left:-20px;background:rgba(45,90,135,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal">Repère 5 — Lire le plan</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Ce que révèle le document d'archive</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Plan DUFPI-E-40-2</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.3rem;">
+            <div class="glass-card reveal accent-border-l" style="padding:0.9rem 1.1rem;"><p style="font-size:0.8rem;font-weight:600;color:var(--color-text);margin-bottom:0.25rem;">🏘 Les îlots remembrés</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Les parcelles médiévales irrégulières sont redessinées en blocs réguliers adaptés à la construction standardisée. Le remembrement efface le tissu gothique parcellaire tout en respectant les grandes orientations historiques.</p></div>
+            <div class="glass-card reveal accent-border-blue" style="padding:0.9rem 1.1rem;"><p style="font-size:0.8rem;font-weight:600;color:var(--color-text);margin-bottom:0.25rem;">🛣 Les axes élargis</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">La rue des Trois-Cailloux est portée à <strong>20 mètres</strong> de large, contrepoint de l'axe historique nord-sud (rue Saint-Leu / Saint-Fuscien). Voirie adaptée à l'automobile tout en restant commerçante.</p></div>
+            <div class="glass-card reveal accent-border-l" style="padding:0.9rem 1.1rem;"><p style="font-size:0.8rem;font-weight:600;color:var(--color-text);margin-bottom:0.25rem;">🏛 Les places ordonnancées</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">De la place des Halles à la place Alphonse-Fiquet (face à la gare), un réseau hiérarchisé de places publiques compose le squelette civique de la ville nouvelle.</p></div>
+            <div class="glass-card reveal accent-border-blue" style="padding:0.9rem 1.1rem;"><p style="font-size:0.8rem;font-weight:600;color:var(--color-text);margin-bottom:0.25rem;">🌊 La Somme &amp; les hortillonnages</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Le fleuve reste l'épine dorsale du paysage. Les hortillonnages — jardins-marais maraîchers à l'est depuis le Moyen Âge — demeurent une constante identitaire de la ville.</p></div>
+        </div>
+        <div class="glass-card reveal" style="margin-top:0.8rem;padding:0.78rem 1.1rem;background:rgba(15,76,129,0.04);"><p style="font-size:0.84rem;line-height:1.55;color:var(--color-text-secondary);"><strong>À savoir :</strong> un plan d'urbanisme n'indique pas les façades ni les couleurs — il fixe destinations, emprises et largeurs. C'est une <em>partition</em> que de nombreux architectes interpréteront bâtiment par bâtiment à partir de 1947.</p></div>
+        <p class="cite-footer reveal">Sources : Archiwebture (DUFPI-E-40-2) · Wikipedia Pierre Dufau · Archives municipales d'Amiens</p>
+    </div>
+</div>
+
+<!-- SLIDE 8 : ESTHÉTIQUE -->
+<div class="slide" data-slide="8">
+    <div class="gradient-mesh"><div class="blob" style="width:290px;height:290px;top:-40px;left:-30px;background:rgba(200,134,10,0.07);"></div><div class="blob" style="width:230px;height:230px;bottom:-35px;right:-30px;background:rgba(139,69,19,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal">Repère 6 — L'esthétique</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Brique picarde &amp; béton armé — le compromis Dufau</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Régionalisme moderne · 1947–1960</span></div>
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:1.1rem;margin-top:0.3rem;">
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.88rem;line-height:1.6;color:var(--color-text-secondary);">Face au vide laissé par les bombes, Dufau ne part pas d'une page blanche. Il <strong>conserve les grands repères</strong> — cathédrale, Somme, axes majeurs — mais modernise : voiries rectifiées, îlots réguliers, places monumentales.</p></div>
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.88rem;line-height:1.6;color:var(--color-text-secondary);">L'architecture choisit les <strong>matériaux traditionnels picards — la brique</strong> — associés à des formes modernes et dépouillées. Ce double choix répond aux Amiénois (préserver l'identité) et au MRU (standardisation).</p></div>
+                <div class="glass-card reveal accent-border-l" style="padding:0.85rem 1.1rem;"><p style="font-size:0.87rem;font-style:italic;color:var(--color-text-secondary);">Ce qu'on appelle aujourd'hui un <strong>régionalisme moderne</strong> : des formes du XXe siècle inscrites dans les matériaux du terroir picard.</p></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.1rem;text-align:center;background:rgba(45,90,135,0.06);border-color:rgba(148,163,184,0.18);">
+                    <p style="font-size:0.68rem;font-weight:600;color:var(--color-accent-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.45rem;">La Tour Perret</p>
+                    <p class="stat-num" style="font-size:2.3rem;color:var(--color-accent-3);">110 m</p>
+                    <p style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.15rem;">1er immeuble français en béton &gt;100 m</p>
+                    <div style="margin-top:0.6rem;padding-top:0.6rem;border-top:1px solid rgba(45,90,135,0.12);">
+                        <p style="font-size:0.72rem;color:var(--color-text-secondary);">Conçue 1942 · 1re pierre mai 1950<br>Gros-œuvre mars 1952</p>
+                        <p style="font-size:0.68rem;color:var(--color-text-muted);margin-top:0.25rem;">Monument historique : 1975 &amp; 2003</p>
+                    </div>
+                </div>
+                <div class="glass-card reveal" style="padding:0.9rem 1.1rem;"><p style="font-size:0.68rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Auguste Perret (1874–1954)</p><p style="font-size:0.83rem;line-height:1.55;color:var(--color-text-secondary);">Pionnier du béton armé, auteur du théâtre des Champs-Élysées (1913) et de l'église du Raincy (1923). Chargé par Dufau de la gare et de la place Alphonse-Fiquet. Il reconstruira ensuite Le Havre (UNESCO 2005).</p></div>
+            </div>
+        </div>
+        <p class="cite-footer reveal">Sources : Wikipedia Pierre Dufau · Archives municipales d'Amiens · Académie des Beaux-Arts · FranceArchives (notice Perret)</p>
+    </div>
+</div>
+
+<!-- SLIDE 9 : CHRONOLOGIE -->
+<div class="slide" data-slide="9">
+    <div class="gradient-mesh"><div class="blob" style="width:310px;height:310px;top:-50px;right:-40px;background:rgba(139,69,19,0.07);"></div><div class="blob" style="width:210px;height:210px;bottom:-30px;left:-20px;background:rgba(200,134,10,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal">Repère 7 — Chronologie</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">D'un plan à une ville — 1940–2014 (74 ans)</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">La plus longue reconstruction française</span></div>
+        <div style="position:relative;padding-left:44px;display:flex;flex-direction:column;gap:0.65rem;margin-top:0.4rem;">
+            <div class="timeline-line reveal"></div>
+            <div class="reveal" style="display:flex;align-items:flex-start;gap:0.9rem;"><div class="timeline-dot" style="margin-left:-33px;margin-top:4px;background:#b42814;box-shadow:0 0 0 3px rgba(180,40,20,0.15);"></div><div class="glass-card" style="padding:0.65rem 1rem;flex:1;"><span class="year-pill" style="font-size:0.76rem;">1940</span><p style="font-size:0.85rem;line-height:1.5;color:var(--color-text-secondary);margin-top:0.25rem;"><strong>18–23 mai :</strong> bombardements, 75% du centre détruit. Population réduite de 93 000 à 5 000 habitants. Concours d'idées lancé à l'automne — réservé aux architectes picards.</p></div></div>
+            <div class="reveal" style="display:flex;align-items:flex-start;gap:0.9rem;"><div class="timeline-dot" style="margin-left:-33px;margin-top:4px;"></div><div class="glass-card" style="padding:0.65rem 1rem;flex:1;"><span class="year-pill" style="font-size:0.76rem;">1941–42</span><p style="font-size:0.85rem;line-height:1.5;color:var(--color-text-secondary);margin-top:0.25rem;"><strong>Juillet 1941 :</strong> Pierre Dufau agréé architecte reconstructeur. <strong>Juillet 1942 :</strong> plan adopté — sous l'Occupation — avec remembrement des îlots, élargissement des voies, réseau de places.</p></div></div>
+            <div class="reveal" style="display:flex;align-items:flex-start;gap:0.9rem;"><div class="timeline-dot" style="margin-left:-33px;margin-top:4px;"></div><div class="glass-card" style="padding:0.65rem 1rem;flex:1;"><span class="year-pill" style="font-size:0.76rem;">1947</span><p style="font-size:0.85rem;line-height:1.5;color:var(--color-text-secondary);margin-top:0.25rem;"><strong>13 juillet 1947 :</strong> 1re pierre officielle, angle rue Allart / place René Goblet. Débuts du chantier : cité scolaire (1953), halles (1956), gare (1957), Maison de la culture (1966).</p></div></div>
+            <div class="reveal" style="display:flex;align-items:flex-start;gap:0.9rem;"><div class="timeline-dot" style="margin-left:-33px;margin-top:4px;background:var(--color-accent-2);box-shadow:0 0 0 3px rgba(126,200,245,0.22);"></div><div class="glass-card" style="padding:0.65rem 1rem;flex:1;"><span class="year-pill" style="background:linear-gradient(135deg,var(--color-accent-2),var(--color-accent-1));font-size:0.76rem;">1949–52</span><p style="font-size:0.85rem;line-height:1.5;color:var(--color-text-secondary);margin-top:0.25rem;"><strong>Tour Perret :</strong> chantier débuté le 15 nov. 1949, 1re pierre le 22 mai 1950, gros-œuvre achevé mars 1952. Premier immeuble français en béton armé de plus de 100 m.</p></div></div>
+            <div class="reveal" style="display:flex;align-items:flex-start;gap:0.9rem;"><div class="timeline-dot" style="margin-left:-33px;margin-top:4px;background:var(--color-accent-3);box-shadow:0 0 0 3px rgba(148,163,184,0.22);"></div><div class="glass-card" style="padding:0.65rem 1rem;flex:1;"><span class="year-pill" style="background:linear-gradient(135deg,var(--color-accent-3),#1d3557);font-size:0.76rem;">2014</span><p style="font-size:0.85rem;line-height:1.5;color:var(--color-text-secondary);margin-top:0.25rem;"><strong>Fin officielle de la reconstruction :</strong> les appartements de la place au Feurre comblent les derniers vides des bombes de mai 1940. 74 ans après le début des destructions.</p></div></div>
+        </div>
+        <p class="cite-footer reveal">Sources : Archives municipales d'Amiens · Amiens.fr (trésors d'archives) · CIAP Amiens (exposition 2024) · Amiens.fr (« Reconstruire la reconstruction »)</p>
+    </div>
+</div>
+
+<!-- SLIDE 10 : COMPARAISON NATIONALE -->
+<div class="slide" data-slide="10">
+    <div class="gradient-mesh"><div class="blob" style="width:290px;height:290px;top:-40px;right:-40px;background:rgba(148,163,184,0.10);"></div><div class="blob" style="width:210px;height:210px;bottom:-30px;left:-20px;background:rgba(139,69,19,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal" style="background:rgba(148,163,184,0.12);color:var(--color-accent-3);">Repère 8 — Comparaison nationale</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Amiens parmi les villes martyres de France</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Reconstruction française · 1944–1960</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.3rem;">
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.7rem;font-weight:600;color:var(--color-accent-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;">Le Havre — Auguste Perret — UNESCO 2005</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Nommé architecte en chef en 1946, Perret opte pour la <strong>rupture radicale</strong> : trame modulaire en béton armé sur une ville entièrement neuve. Le centre du Havre est le seul site de reconstruction d'après-guerre inscrit au <strong>patrimoine mondial de l'UNESCO (2005)</strong>.</p></div>
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.7rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;">Les autres villes reconstruites</p><div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.5rem;"><span style="font-size:0.75rem;padding:0.2rem 0.55rem;background:rgba(148,163,184,0.12);color:var(--color-accent-3);border-radius:4px;">Brest</span><span style="font-size:0.75rem;padding:0.2rem 0.55rem;background:rgba(148,163,184,0.12);color:var(--color-accent-3);border-radius:4px;">Saint-Lô</span><span style="font-size:0.75rem;padding:0.2rem 0.55rem;background:rgba(148,163,184,0.12);color:var(--color-accent-3);border-radius:4px;">Caen</span><span style="font-size:0.75rem;padding:0.2rem 0.55rem;background:rgba(148,163,184,0.12);color:var(--color-accent-3);border-radius:4px;">Rouen</span><span style="font-size:0.75rem;padding:0.2rem 0.55rem;background:rgba(148,163,184,0.12);color:var(--color-accent-3);border-radius:4px;">Dunkerque</span><span style="font-size:0.75rem;padding:0.2rem 0.55rem;background:rgba(148,163,184,0.12);color:var(--color-accent-3);border-radius:4px;">Lorient</span></div><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Chaque ville reçoit un architecte différent avec une approche distincte, de la rupture totale (Le Havre) à la continuité mémorielle (certains centres du Nord).</p></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.7rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;">Amiens : la voie du milieu</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Là où Le Havre choisit la <strong>table rase</strong>, Amiens opte pour la <strong>continuité composée</strong>. Dufau préserve les grands axes historiques, dialogue avec la cathédrale médiévale, ancre la modernité dans la brique régionale.</p></div>
+                <div class="glass-card reveal accent-border-l" style="padding:0.85rem 1.1rem;background:rgba(15,76,129,0.04);"><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">La singularité d'Amiens : <strong>deux flèches face à face</strong>. La cathédrale du XIIIe siècle et la Tour Perret du XXe forment une silhouette urbaine unique — dialogue entre pierre médiévale et béton armé.</p></div>
+                <div class="glass-card reveal" style="padding:0.85rem 1.1rem;"><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">La reconstruction d'Amiens, selon France 3 Hauts-de-France (janv. 2025), est une architecture que l'on « <em>ne doit pas qu'à Auguste Perret</em> ». Une trentaine d'architectes y ont collaboré sous la coordination de Dufau.</p></div>
+            </div>
+        </div>
+        <p class="cite-footer reveal">Sources : Académie des Beaux-Arts (Perret) · L'Agora des Arts · France 3 Hauts-de-France (janv. 2025) · Larousse (cathédrale Amiens)</p>
+    </div>
+</div>
+
+<!-- SLIDE 11 : NOTRE-DAME D'AMIENS -->
+<div class="slide" data-slide="11">
+    <div class="gradient-mesh"><div class="blob" style="width:330px;height:330px;top:-45px;left:-35px;background:rgba(200,134,10,0.07);"></div><div class="blob" style="width:230px;height:230px;bottom:-35px;right:-25px;background:rgba(45,90,135,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal" style="background:rgba(126,200,245,0.12);color:var(--color-accent-2);">Repère 9 — Patrimoine mondial</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Notre-Dame d'Amiens — le témoin millénaire</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">1220 · UNESCO 1981</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1.65fr;gap:1.1rem;margin-top:0.3rem;">
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="text-align:center;padding:0.9rem;"><p style="font-size:2.5rem;margin-bottom:0.2rem;">🕍</p><p style="font-size:0.68rem;font-weight:600;color:var(--color-accent-2);text-transform:uppercase;letter-spacing:0.08em;">Patrimoine mondial</p><p style="font-family:'Open Sans', Arial, sans-serif;font-size:1.7rem;font-weight:700;color:var(--color-accent-1);">UNESCO 1981</p></div>
+                <div class="glass-card reveal" style="padding:0.85rem 1rem;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;text-align:center;">
+                        <div><p style="font-size:1.2rem;font-family:'Open Sans', Arial, sans-serif;font-weight:700;color:var(--color-accent-1);">145 m</p><p style="font-size:0.67rem;color:var(--color-text-muted);">longueur</p></div>
+                        <div><p style="font-size:1.2rem;font-family:'Open Sans', Arial, sans-serif;font-weight:700;color:var(--color-accent-1);">42,3 m</p><p style="font-size:0.67rem;color:var(--color-text-muted);">hauteur nef</p></div>
+                        <div><p style="font-size:1.2rem;font-family:'Open Sans', Arial, sans-serif;font-weight:700;color:var(--color-accent-1);">112 m</p><p style="font-size:0.67rem;color:var(--color-text-muted);">flèche</p></div>
+                        <div><p style="font-size:1.2rem;font-family:'Open Sans', Arial, sans-serif;font-weight:700;color:var(--color-accent-1);">200 000</p><p style="font-size:0.67rem;color:var(--color-text-muted);">m³ intérieurs</p></div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.88rem;line-height:1.6;color:var(--color-text-secondary);">Entamée en <strong>1220</strong> sous l'évêque Évrard de Fouilloy par Robert de Luzarches, achevée en moins de 70 ans, la cathédrale présente une <strong>unité de style gothique classique</strong> rarissime pour l'époque.</p></div>
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.88rem;line-height:1.6;color:var(--color-text-secondary);">John Ruskin la surnomme « <em>le Parthénon du gothique</em> ». Avec 200 000 m³ de volume intérieur, c'est la plus vaste cathédrale de France — elle pourrait contenir deux fois Notre-Dame de Paris.</p></div>
+                <div class="glass-card reveal accent-border-blue" style="padding:0.85rem 1.1rem;"><p style="font-size:0.88rem;line-height:1.55;color:var(--color-text-secondary);">En mai 1940, sa présence miraculeusement indemne empêche Amiens d'être une tabula rasa absolue. La reconstruction de Dufau se construit littéralement <em>à son ombre</em>, en dialogue permanent avec huit siècles d'histoire.</p></div>
+            </div>
+        </div>
+        <p class="cite-footer reveal">Sources : Amiens.fr · Structurae.net · Larousse encyclopédie · lesplusbellescathedralesgothiques.com · Techno-science.net</p>
+    </div>
+</div>
+
+<!-- SLIDE 12 : CIAP & VALORISATION -->
+<div class="slide" data-slide="12">
+    <div class="gradient-mesh"><div class="blob" style="width:310px;height:310px;top:-40px;right:-40px;background:rgba(139,69,19,0.07);"></div><div class="blob" style="width:210px;height:210px;bottom:-30px;left:-20px;background:rgba(45,90,135,0.06);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal">Repère 10 — Aujourd'hui</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Ce patrimoine enfin reconnu et célébré</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">CIAP Amiens — 2024</span></div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:1.1rem;margin-top:0.3rem;">
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;background:rgba(45,90,135,0.05);border-color:rgba(148,163,184,0.18);"><p style="font-size:0.7rem;font-weight:600;color:var(--color-accent-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;">Centre d'interprétation de l'architecture et du patrimoine (CIAP)</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">Inauguré le <strong>25 janvier 2024</strong> au 23, place Notre-Dame. Exposition permanente + temporaire + salle pédagogique + auditorium. Accessible librement via l'office de tourisme d'Amiens Métropole.</p></div>
+                <div class="glass-card reveal" style="padding:1rem 1.2rem;"><p style="font-size:0.7rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;">Exposition « Reconstruire après 1940 »</p><p style="font-size:0.87rem;line-height:1.55;color:var(--color-text-secondary);">16 nov. 2024 → 18 mai 2025. Commissaire : <strong>Hugo Massire</strong> (maître de conférences). Plans d'architectes, maquettes, photos, baraquements, brique concassée. Conférences et activités pédagogiques. 80e anniversaire de la Libération.</p></div>
+                <div class="glass-card reveal accent-border-l" style="padding:0.8rem 1.1rem;"><p style="font-size:0.86rem;line-height:1.5;color:var(--color-text-secondary);font-style:italic;">« Un patrimoine parfois mal compris, mal aimé. » — Pierre Savreux, vice-président Amiens Métropole, 2025.</p></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="glass-card reveal" style="padding:1rem 1.1rem;text-align:center;"><p style="font-size:2.2rem;margin-bottom:0.3rem;">🏅</p><p style="font-size:0.68rem;font-weight:600;color:var(--color-accent-1);text-transform:uppercase;letter-spacing:0.08em;">Monuments historiques</p><p style="font-size:0.84rem;line-height:1.55;color:var(--color-text-secondary);margin-top:0.35rem;"><strong>Tour Perret :</strong><br>inscrite 1975<br><strong>Ensemble place Alphonse-Fiquet :</strong><br>inscrit 2003</p></div>
+                <div class="glass-card reveal" style="padding:0.9rem 1.1rem;"><p style="font-size:0.68rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Un regard qui évolue</p><p style="font-size:0.84rem;line-height:1.55;color:var(--color-text-secondary);">France 3 Hauts-de-France (janv. 2025) constate que <em>« les regards semblent actuellement évoluer »</em> sur cette architecture d'après-guerre longtemps décriée. Le CIAP lui offre désormais un espace d'interprétation permanent.</p></div>
+            </div>
+        </div>
+        <p class="cite-footer reveal">Sources : Amiens.fr (« Reconstruire la reconstruction ») · CIAP Amiens Métropole · France 3 HdF (janv. 2025) · Archives.legiondhonneur.fr (Auguste Perret)</p>
+    </div>
+</div>
+
+<!-- SLIDE 13 : SOURCES PRIMAIRES -->
+<div class="slide" data-slide="13">
+    <div class="gradient-mesh"><div class="blob" style="width:290px;height:290px;top:-40px;right:-40px;background:rgba(200,134,10,0.07);"></div><div class="blob" style="width:210px;height:210px;bottom:-30px;left:-20px;background:rgba(139,69,19,0.05);"></div></div>
+    <div class="content">
+        <span class="section-badge reveal">Pour aller plus loin</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:600;margin:0.4rem 0 0.2rem;line-height:1.2;">Sources primaires accessibles au public</h2>
+        <div class="ornament reveal"><span style="font-size:0.68rem;color:var(--color-text-muted);letter-spacing:0.1em;text-transform:uppercase;">Institutions & archives</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-top:0.3rem;">
+            <div class="glass-card reveal" style="padding:0.9rem 1.1rem;"><p style="font-size:0.68rem;font-weight:700;color:var(--color-accent-1);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem;">📁 Archiwebture / CAPA, Paris</p><p style="font-size:0.83rem;line-height:1.5;color:var(--color-text-secondary);">Fonds Pierre Dufau (FRAPN02_DUFPI) — Projet DUFPI-E-40-2. Plans, notices, photos, presse. <em>Sur rendez-vous ; notices en ligne sur archiwebture.citedelarchitecture.fr</em></p></div>
+            <div class="glass-card reveal" style="padding:0.9rem 1.1rem;"><p style="font-size:0.68rem;font-weight:700;color:var(--color-accent-3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem;">🗺 Archives municipales d'Amiens</p><p style="font-size:0.83rem;line-height:1.5;color:var(--color-text-secondary);">Plan couleur légendé de la reconstruction — très lisible pour le public. <em>Consultable sur place · partiellement en ligne (« Trésors d'archives »)</em></p></div>
+            <div class="glass-card reveal" style="padding:0.9rem 1.1rem;"><p style="font-size:0.68rem;font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem;">📜 Archives dép. de la Somme</p><p style="font-size:0.83rem;line-height:1.5;color:var(--color-text-secondary);">Lois de reconstruction, photographies des destructions 1940, maquettes, dossiers dommages de guerre. <em>Sur rendez-vous</em></p></div>
+            <div class="glass-card reveal" style="padding:0.9rem 1.1rem;background:rgba(45,90,135,0.05);border-color:rgba(45,90,135,0.13);"><p style="font-size:0.68rem;font-weight:700;color:var(--color-accent-3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem;">🏛 CIAP Amiens — 23, pl. Notre-Dame</p><p style="font-size:0.83rem;line-height:1.5;color:var(--color-text-secondary);">Exposition permanente depuis janvier 2024. <em>Accès libre via l'office de tourisme d'Amiens Métropole</em></p></div>
+            <div class="glass-card reveal" style="padding:0.9rem 1.1rem;"><p style="font-size:0.68rem;font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem;">💻 Agorha / INHA (en ligne)</p><p style="font-size:0.83rem;line-height:1.5;color:var(--color-text-secondary);">Fiche biographique complète de Pierre Dufau, liste de réalisations. <em>Accès libre : agorha.inha.fr</em></p></div>
+            <div class="glass-card reveal" style="padding:0.9rem 1.1rem;"><p style="font-size:0.68rem;font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem;">📚 Hugo Massire — Thèse 2017</p><p style="font-size:0.83rem;line-height:1.5;color:var(--color-text-secondary);"><em>Pierre Dufau architecte (1908–1985) : un libéral discipliné.</em> Univ. de Tours, 2017. Référence universitaire de base. Disponible sur <strong>theses.fr</strong></p></div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 14 : CONCLUSION -->
+<div class="slide slide-dark" data-slide="14">
+    <div class="gradient-mesh"><div class="blob" style="width:480px;height:480px;top:-100px;right:-70px;background:rgba(200,134,10,0.2);"></div><div class="blob" style="width:280px;height:280px;bottom:-55px;left:-40px;background:rgba(15,76,129,0.15);"></div><div class="blob" style="width:170px;height:170px;top:38%;left:9%;background:rgba(45,90,135,0.11);"></div></div>
+    <div class="content" style="text-align:center;max-width:840px;">
+        <span class="reveal" style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,220,160,0.55);font-family:'Open Sans', Arial, sans-serif;">Conclusion</span>
+        <h2 class="reveal" style="font-family:'Open Sans', Arial, sans-serif;font-size:clamp(1.9rem,4.2vw,3.3rem);font-weight:300;color:#fdf6e3;line-height:1.15;margin:0.5rem 0 0.35rem;">Le plan de 1942 reste une leçon</h2>
+        <div class="reveal" style="display:flex;align-items:center;gap:0.9rem;justify-content:center;margin-bottom:1.2rem;"><div style="height:1px;width:55px;background:rgba(245,220,160,0.22);"></div><span style="color:rgba(245,220,160,0.35);">✦</span><div style="height:1px;width:55px;background:rgba(245,220,160,0.22);"></div></div>
+        <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;text-align:left;margin-bottom:1.3rem;">
+            <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:9px;padding:0.9rem 1.1rem;"><p style="font-size:0.74rem;font-weight:600;color:rgba(245,220,160,0.65);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">L'urgence et la foi</p><p style="font-size:0.85rem;line-height:1.55;color:rgba(253,246,227,0.78);">Planifier sous l'Occupation, adopter un plan en 1942 : Dufau et la ville font confiance à l'avenir au moment même de la catastrophe.</p></div>
+            <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:9px;padding:0.9rem 1.1rem;"><p style="font-size:0.74rem;font-weight:600;color:rgba(245,220,160,0.65);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">La pensée du milieu</p><p style="font-size:0.85rem;line-height:1.55;color:rgba(253,246,227,0.78);">Ni table rase ni restauration muséale : Dufau arbitre entre mémoire et modernité, entre la brique picarde et le béton armé.</p></div>
+            <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:9px;padding:0.9rem 1.1rem;"><p style="font-size:0.74rem;font-weight:600;color:rgba(245,220,160,0.65);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Le dialogue des flèches</p><p style="font-size:0.85rem;line-height:1.55;color:rgba(253,246,227,0.78);">Cathédrale du XIIIe siècle et Tour Perret du XXe : deux flèches, deux matières, un seul horizon — celui d'Amiens.</p></div>
+            <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:9px;padding:0.9rem 1.1rem;"><p style="font-size:0.74rem;font-weight:600;color:rgba(245,220,160,0.65);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">L'œuvre encore vivante</p><p style="font-size:0.85rem;line-height:1.55;color:rgba(253,246,227,0.78);">Achevée matériellement en 2014, la reconstruction se poursuit culturellement. Le CIAP, ouvert en 2024, en est la plus récente expression.</p></div>
+        </div>
+        <p class="reveal" style="font-size:0.67rem;color:rgba(245,220,160,0.28);letter-spacing:0.06em;font-family:'Open Sans', Arial, sans-serif;">Catalogue · Fonds FRAPN02_DUFPI · Archiwebture, CAPA · Archives municipales d'Amiens · INHA · FranceArchives · CIAP Amiens Métropole</p>
+    </div>
+</div>
+
+</div><!-- /deck -->
+
+<div class="nav-controls">
+    <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+    <div class="slide-dots" id="dots"></div>
+    <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+    <span class="slide-counter" id="counter">1 / 14</span>
+</div>
+
+<script>
+    let current=1;
+    const total=document.querySelectorAll('.slide').length;
+    const dotsContainer=document.getElementById('dots');
+    const counter=document.getElementById('counter');
+    for(let i=1;i<=total;i++){const dot=document.createElement('div');dot.className='dot'+(i===1?' active':'');dot.onclick=()=>goToSlide(i);dotsContainer.appendChild(dot);}
+    function goToSlide(n){const prev=document.querySelector('.slide.active');const next=document.querySelector('.slide[data-slide="'+n+'"]');if(prev)prev.classList.remove('active');if(next){next.classList.add('active');animateSlide(next);}current=n;updateNav();}
+    function changeSlide(dir){let next=current+dir;if(next<1)next=total;if(next>total)next=1;goToSlide(next);}
+    function updateNav(){document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('active',i+1===current);});counter.textContent=current+' / '+total;}
+    document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();changeSlide(1);}if(e.key==='ArrowLeft'){e.preventDefault();changeSlide(-1);}});
+    let touchStartX=0;
+    document.addEventListener('touchstart',(e)=>{touchStartX=e.touches[0].clientX;});
+    document.addEventListener('touchend',(e)=>{const diff=touchStartX-e.changedTouches[0].clientX;if(Math.abs(diff)>50)changeSlide(diff>0?1:-1);});
+    function animateSlide(slide){
+        slide.querySelectorAll('.reveal').forEach((el,i)=>{
+            el.style.transition='none';el.style.opacity='0';el.style.transform='translateY(18px)';el.offsetHeight;
+            const delay=i*0.07;
+            el.style.transition='opacity 0.38s ease '+delay+'s, transform 0.38s ease '+delay+'s';
+            el.style.opacity='1';el.style.transform='translateY(0px)';
+        });
+        const tl=slide.querySelector('.timeline-line');
+        if(tl){tl.style.opacity='0';tl.style.transition='opacity 0.5s ease 0.2s';tl.offsetHeight;tl.style.opacity='1';}
+    }
+    document.addEventListener('mousemove',(e)=>{const sp=document.getElementById('spotlight');if(sp)sp.style.background='radial-gradient(600px circle at '+e.clientX+'px '+e.clientY+'px, rgba(15,76,129,0.04), transparent 40%)';});
+    animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>
